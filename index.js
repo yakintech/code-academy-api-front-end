@@ -1,9 +1,11 @@
 const express = require('express');
 const {categoryRoutes } = require('./routes/categoryRoutes');
 const { default: mongoose } = require('mongoose');
+const { db } = require('./config/db');
 const app = express();
+require('dotenv').config()
 
-mongoose.connect('mongodb+srv://front-end-academy:lJqMb0eJXIVAEo4Q@cluster0.imfaisw.mongodb.net/academydb')
+db.connect();
 
 app.use(express.json())
 
