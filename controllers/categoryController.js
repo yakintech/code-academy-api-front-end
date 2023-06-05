@@ -1,4 +1,5 @@
-const { Category } = require("../models/Category")
+const { Category } = require("../models/Category");
+const { Product } = require("../models/Product");
 
 
 const categoryController = {
@@ -48,6 +49,11 @@ const categoryController = {
             .catch(err => {
                 res.status(500).json(err)
             })
+
+
+        //eğer category silindiğinde ona bağlı tüm ürünleri silmek istersen (tavsiye edilmez!! DOĞRU DEĞİL!!)
+        // Product.deleteMany({ category: id })
+
     },
     update: (req, res) => {
         let id = req.params.id;
