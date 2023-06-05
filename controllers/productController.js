@@ -6,12 +6,13 @@ const productController = {
 
         let limitProduct = req.query.limit;
 
-        console.log(limitProduct);
-
-        Product.find()
+        Product.find({
+            // unitPrice: { $gt: 1800, $lt: 2500 },
+        })
             .limit(limitProduct)
             .populate("category")
             .select("name unitPrice stock")
+            // .sort({name:1})
             .then(data => {
                 res.json(data)
             })
