@@ -20,7 +20,7 @@ app.use(express.json())
 
 app.use((req, res, next) => {
 
-    if (req.url == '/token' || req.url == '/register' ) {
+    if (req.url == '/token' || req.url == '/register') {
         next();
     }
     else {
@@ -52,41 +52,54 @@ app.use('/api/products', productRoutes)
 
 
 
-app.post('/token', (req,res) => {
+app.post('/token', (req, res) => {
 
-    User.findOne({email: req.body.email, password:req.body.password})
-    .then(data => {
-        if(data){
 
-            let token = jwt.sign(req.body.email, privateKey)
 
-            res.json({"token":token})
 
-        }
-        else{
-            res.status(404).json({"msg":"Not Found!"})
-        }
-    })
-    .catch(err => {
-        res.status(500).json(err)
-    })
+
+    User.findOne({ email: req.body.email })
+        .then(user => {
+            if (user) {
+
+                bcrypt.compare(req.body.password, user.password, function (err, result) {
+                    if (result) {
+                        let token = jwt.sign(req.body.email, privateKey)
+                        res.json({ "token": token })
+                    }
+                    else {
+                        res.status(404).json({ "msg": "Not Found!" })
+
+                    }
+                });
+
+
+
+            }
+            else {
+                res.status(404).json({ "msg": "Not Found!" })
+            }
+        })
+        .catch(err => {
+            res.status(500).json(err)
+        })
 
 })
 
 
-app.post('/register', (req,res) => {
+app.post('/register', (req, res) => {
 
     let pwd = req.body.password;
 
-    bcrypt.genSalt(saltRounds, function(err, salt) {
-        bcrypt.hash(pwd, salt, function(err, hash) {
+    bcrypt.genSalt(saltRounds, function (err, salt) {
+        bcrypt.hash(pwd, salt, function (err, hash) {
             const user = new User({
                 email: req.body.email,
                 password: hash
             })
-        
+
             user.save();
-        
+
             res.json(user)
 
         });
